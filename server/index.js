@@ -51,7 +51,7 @@ const DB_FILE = path.join(__dirname, 'db.json');
 
 const defaultDb = {
   users: [
-    { id: 1, name: 'Admin User', email: 'admin@example.com', password: 'adminpassword', role: 'admin', approved: true },
+    { id: 1, name: 'Admin', email: 'evansonkipngeno8009@gmail.com', password: 'Evanson9#', role: 'admin', approved: true },
     { id: 2, name: 'John Doe', email: 'user@example.com', password: 'password123', role: 'user', approved: true }
   ],
   events: [
