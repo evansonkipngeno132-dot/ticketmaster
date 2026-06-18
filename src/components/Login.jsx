@@ -4,22 +4,27 @@ import { motion } from 'framer-motion';
 import './Login.css';
 
 const Login = ({ setAuthUser }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
+    const endpoint = isSignUp ? '/api/signup' : '/api/login';
+    const bodyData = isSignUp ? { name, email, password } : { email, password };
+
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify(bodyData)
       });
       const data = await res.json();
 
@@ -28,7 +33,7 @@ const Login = ({ setAuthUser }) => {
         setAuthUser(data.user);
         navigate('/');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Authentication failed');
       }
     } catch (err) {
       setError('An error occurred. Please try again later.');
@@ -46,12 +51,26 @@ const Login = ({ setAuthUser }) => {
       transition={{ duration: 0.3 }}
     >
       <div className="login-box">
-        <h2>Sign In</h2>
-        <p className="login-subtitle">Welcome back to Ticketmaster</p>
+        <h2>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+        <p className="login-subtitle">
+          {isSignUp ? 'Create your Ticketmaster account' : 'Welcome back to Ticketmaster'}
+        </p>
 
         {error && <div className="login-error">{error}</div>}
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleSubmit} className="login-form">
+          {isSignUp && (
+            <div className="input-group">
+              <label>Full Name</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe" 
+                required 
+              />
+            </div>
+          )}
           <div className="input-group">
             <label>Email Address</label>
             <input 
@@ -74,12 +93,16 @@ const Login = ({ setAuthUser }) => {
           </div>
           
           <button type="submit" className="btn-login" disabled={isLoading}>
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <a href="#">Sign up</a></p>
+          {isSignUp ? (
+            <p>Already have an account? <span onClick={() => { setIsSignUp(false); setError(''); }} style={{cursor: 'pointer', color: 'var(--tm-blue)', fontWeight: 600}}>Sign In</span></p>
+          ) : (
+            <p>Don't have an account? <span onClick={() => { setIsSignUp(true); setError(''); }} style={{cursor: 'pointer', color: 'var(--tm-blue)', fontWeight: 600}}>Sign up</span></p>
+          )}
         </div>
       </div>
     </motion.div>

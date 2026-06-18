@@ -38,14 +38,38 @@ const events = [
   }
 ];
 
-// Auth Endpoint
+// In-memory Users Mock Database
+const users = [
+  { id: 1, name: 'John Doe', email: 'user@example.com', password: 'password123' }
+];
+
+// Auth Endpoints
+app.post('/api/signup', (req, res) => {
+  const { name, email, password } = req.body;
+  
+  if (!name || !email || !password) {
+    return res.status(400).json({ success: false, message: 'Please fill all fields' });
+  }
+  
+  if (users.find(u => u.email === email)) {
+    return res.status(400).json({ success: false, message: 'Email already in use' });
+  }
+
+  const newUser = { id: users.length + 1, name, email, password };
+  users.push(newUser);
+  
+  const token = jwt.sign({ user: newUser }, JWT_SECRET, { expiresIn: '1h' });
+  res.json({ success: true, token, user: { id: newUser.id, name: newUser.name, email: newUser.email } });
+});
+
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
 
-  if (email === 'user@example.com' && password === 'password123') {
-    const user = { id: 1, name: 'John Doe', email: 'user@example.com' };
-    const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ success: true, token, user });
+  const user = users.find(u => u.email === email && u.password === password);
+  if (user) {
+    const safeUser = { id: user.id, name: user.name, email: user.email };
+    const token = jwt.sign({ user: safeUser }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ success: true, token, user: safeUser });
   } else {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
