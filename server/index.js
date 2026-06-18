@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const crypto = require('crypto');
 
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
@@ -213,7 +215,7 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
     `🎟️ You've received a ticket for ${ticket.eventTitle}!`,
     `<h2>Ticket Received!</h2>
      <p>Hi ${ticket.ownerName},</p>
-     <p><strong>${previousOwner.name}</strong> has transferred a ticket to you!</p>
+     <p><strong>${previousOwner.name}</strong> (${previousOwner.email}) has transferred a ticket to you!</p>
      <table style="border-collapse:collapse;width:100%">
        <tr><td><strong>Event</strong></td><td>${ticket.eventTitle}</td></tr>
        <tr><td><strong>Date</strong></td><td>${ticket.eventDate}</td></tr>
