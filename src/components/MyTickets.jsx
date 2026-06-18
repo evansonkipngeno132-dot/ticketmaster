@@ -8,7 +8,9 @@ const MyTickets = () => {
   const [loading, setLoading] = useState(true);
   const [transferTicket, setTransferTicket] = useState(null);
   const [recipientEmail, setRecipientEmail] = useState('');
-  const [recipientName, setRecipientName] = useState('');
+  const [recipientFirstName, setRecipientFirstName] = useState('');
+  const [recipientLastName, setRecipientLastName] = useState('');
+  const [transferNote, setTransferNote] = useState('');
   const [transferStatus, setTransferStatus] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
   const navigate = useNavigate();
@@ -36,7 +38,13 @@ const MyTickets = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('tm_token')}`
         },
-        body: JSON.stringify({ ticketId: transferTicket.id, recipientEmail, recipientName })
+        body: JSON.stringify({
+          ticketId: transferTicket.id,
+          recipientEmail,
+          recipientFirstName,
+          recipientLastName,
+          note: transferNote
+        })
       });
       const data = await res.json();
       if (data.success) {
@@ -105,9 +113,31 @@ const MyTickets = () => {
                     <div className="ticket-value ticket-id">{ticket.id}</div>
                   </div>
                 </div>
+                {(ticket.section || ticket.row || ticket.seat) && (
+                  <div className="ticket-row ticket-seat-row">
+                    {ticket.section && (
+                      <div>
+                        <div className="ticket-label">Section</div>
+                        <div className="ticket-value">{ticket.section}</div>
+                      </div>
+                    )}
+                    {ticket.row && (
+                      <div>
+                        <div className="ticket-label">Row</div>
+                        <div className="ticket-value">{ticket.row}</div>
+                      </div>
+                    )}
+                    {ticket.seat && (
+                      <div>
+                        <div className="ticket-label">Seat</div>
+                        <div className="ticket-value">{ticket.seat}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="ticket-perforated-right">
-                <button className="btn-transfer" onClick={() => { setTransferTicket(ticket); setRecipientEmail(''); setRecipientName(''); setTransferStatus(''); }}>
+                <button className="btn-transfer" onClick={() => { setTransferTicket(ticket); setRecipientEmail(''); setRecipientFirstName(''); setRecipientLastName(''); setTransferNote(''); setTransferStatus(''); }}>
                   Transfer
                 </button>
               </div>
@@ -149,14 +179,27 @@ const MyTickets = () => {
                     <div className="transfer-error">{transferStatus.replace('error:', '')}</div>
                   )}
                   <form onSubmit={handleTransfer}>
-                    <div className="input-group">
-                      <label>Recipient Name</label>
-                      <input
-                        type="text"
-                        value={recipientName}
-                        onChange={e => setRecipientName(e.target.value)}
-                        placeholder="Jane Doe"
-                      />
+                    <div className="input-row">
+                      <div className="input-group">
+                        <label>First Name *</label>
+                        <input
+                          type="text"
+                          value={recipientFirstName}
+                          onChange={e => setRecipientFirstName(e.target.value)}
+                          placeholder="Jane"
+                          required
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Last Name *</label>
+                        <input
+                          type="text"
+                          value={recipientLastName}
+                          onChange={e => setRecipientLastName(e.target.value)}
+                          placeholder="Doe"
+                          required
+                        />
+                      </div>
                     </div>
                     <div className="input-group">
                       <label>Recipient Email *</label>
@@ -166,6 +209,15 @@ const MyTickets = () => {
                         onChange={e => setRecipientEmail(e.target.value)}
                         placeholder="recipient@example.com"
                         required
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label>Note (optional)</label>
+                      <textarea
+                        value={transferNote}
+                        onChange={e => setTransferNote(e.target.value)}
+                        placeholder="Add a message for the recipient..."
+                        rows="3"
                       />
                     </div>
                     <div className="modal-actions">

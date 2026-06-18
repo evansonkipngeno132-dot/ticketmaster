@@ -240,8 +240,46 @@
   color: var(--text-secondary);
 }
 
+/* Seat row on ticket cards */
+.ticket-seat-row {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Transfer modal - side-by-side name inputs */
+.modal-box .input-row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.modal-box .input-row .input-group {
+  flex: 1;
+}
+
+/* Textarea styling in modal */
+.modal-box textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 72px;
+  transition: border-color var(--transition-fast);
+}
+
+.modal-box textarea:focus {
+  outline: none;
+  border-color: var(--tm-blue);
+}
+
 @media (max-width: 600px) {
   .ticket-card { flex-direction: column; }
   .ticket-perforated-right { width: 100%; border-left: none; border-top: 2px dashed var(--border-color); padding: var(--spacing-md) var(--spacing-lg); }
   .ticket-perforated-left { display: none; }
+  .modal-box .input-row { flex-direction: column; gap: var(--spacing-sm); }
 }

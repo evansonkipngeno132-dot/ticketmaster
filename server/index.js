@@ -221,6 +221,12 @@ app.post('/api/checkout', verifyToken, (req, res) => {
   const price = isVip ? '$450.00' : '$150.00';
   const tierName = isVip ? 'VIP Package' : 'General Admission';
 
+  // Generate section, row, and seat
+  const sectionNames = isVip ? ['VIP-A', 'VIP-B', 'VIP-C'] : ['GA-1', 'GA-2', 'GA-3', 'GA-4'];
+  const section = sectionNames[Math.floor(Math.random() * sectionNames.length)];
+  const row = String.fromCharCode(65 + Math.floor(Math.random() * 20)); // A-T
+  const seat = Math.floor(Math.random() * 30) + 1;
+
   const newTicket = {
     id: ticketId,
     eventId: event.id,
@@ -231,6 +237,9 @@ app.post('/api/checkout', verifyToken, (req, res) => {
     ownerName: req.user.name,
     tier: tierName,
     price,
+    section,
+    row,
+    seat,
     purchasedAt: new Date().toISOString()
   };
   tickets.push(newTicket);
@@ -248,6 +257,9 @@ app.post('/api/checkout', verifyToken, (req, res) => {
        <tr><td><strong>Date</strong></td><td>${event.date}</td></tr>
        <tr><td><strong>Venue</strong></td><td>${event.venue}</td></tr>
        <tr><td><strong>Tier</strong></td><td>${tierName}</td></tr>
+       <tr><td><strong>Section</strong></td><td>${section}</td></tr>
+       <tr><td><strong>Row</strong></td><td>${row}</td></tr>
+       <tr><td><strong>Seat</strong></td><td>${seat}</td></tr>
        <tr><td><strong>Price</strong></td><td>${price}</td></tr>
        <tr><td><strong>Ticket ID</strong></td><td><strong>${ticketId}</strong></td></tr>
      </table>
@@ -265,7 +277,7 @@ app.get('/api/my-tickets', verifyToken, (req, res) => {
 });
 
 app.post('/api/tickets/transfer', verifyToken, (req, res) => {
-  const { ticketId, recipientEmail, recipientName } = req.body;
+  const { ticketId, recipientEmail, recipientFirstName, recipientLastName, note } = req.body;
   if (!ticketId || !recipientEmail)
     return res.status(400).json({ success: false, message: 'Ticket ID and recipient email are required' });
 
@@ -276,9 +288,13 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
   if (recipientEmail === req.user.email)
     return res.status(400).json({ success: false, message: 'You cannot transfer a ticket to yourself' });
 
+  const recipientFullName = (recipientFirstName && recipientLastName)
+    ? `${recipientFirstName} ${recipientLastName}`
+    : recipientEmail;
+
   const previousOwner = { name: ticket.ownerName, email: ticket.ownerEmail };
   ticket.ownerEmail = recipientEmail;
-  ticket.ownerName = recipientName || recipientEmail;
+  ticket.ownerName = recipientFullName;
   saveDb();
 
   // Email to sender
@@ -287,7 +303,8 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
     `✅ Ticket Transfer Confirmed — ${ticket.eventTitle}`,
     `<h2>Ticket Transfer Successful</h2>
      <p>Hi ${previousOwner.name},</p>
-     <p>Your ticket (<strong>${ticketId}</strong>) for <strong>${ticket.eventTitle}</strong> has been successfully transferred to <strong>${recipientEmail}</strong>.</p>
+     <p>Your ticket (<strong>${ticketId}</strong>) for <strong>${ticket.eventTitle}</strong> has been successfully transferred to <strong>${recipientFullName}</strong> (${recipientEmail}).</p>
+     ${note ? `<p><strong>Your note:</strong> ${note}</p>` : ''}
      <p>If you did not initiate this transfer, please contact support immediately.</p>`
   );
 
@@ -296,13 +313,17 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
     recipientEmail,
     `🎟️ You've received a ticket for ${ticket.eventTitle}!`,
     `<h2>Ticket Received!</h2>
-     <p>Hi ${ticket.ownerName},</p>
+     <p>Hi ${recipientFullName},</p>
      <p><strong>${previousOwner.name}</strong> (${previousOwner.email}) has transferred a ticket to you!</p>
+     ${note ? `<p><strong>Message from ${previousOwner.name}:</strong> ${note}</p>` : ''}
      <table style="border-collapse:collapse;width:100%">
        <tr><td><strong>Event</strong></td><td>${ticket.eventTitle}</td></tr>
        <tr><td><strong>Date</strong></td><td>${ticket.eventDate}</td></tr>
        <tr><td><strong>Venue</strong></td><td>${ticket.eventVenue}</td></tr>
        <tr><td><strong>Tier</strong></td><td>${ticket.tier}</td></tr>
+       <tr><td><strong>Section</strong></td><td>${ticket.section || 'N/A'}</td></tr>
+       <tr><td><strong>Row</strong></td><td>${ticket.row || 'N/A'}</td></tr>
+       <tr><td><strong>Seat</strong></td><td>${ticket.seat || 'N/A'}</td></tr>
        <tr><td><strong>Ticket ID</strong></td><td><strong>${ticketId}</strong></td></tr>
      </table>
      <p>Enjoy the show! 🎉</p>`
