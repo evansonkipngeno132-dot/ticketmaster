@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -14,34 +14,29 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
 app.use(cors());
 app.use(express.json());
 
-// ─── Email Transporter ───────────────────────────────────────────────────────
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Verify SMTP connection config at startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('📧 SMTP Transporter verification failed:', error.message);
-  } else {
-    console.log('📧 SMTP Transporter is ready to send messages');
-  }
-});
+// ─── SendGrid Email Setup ────────────────────────────────────────────────────
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('📧 SendGrid API key configured');
+} else {
+  console.warn('📧 SENDGRID_API_KEY not set — emails will be logged only');
+}
 
 const sendEmail = async (to, subject, html) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.log(`\n📧 [EMAIL LOG - no credentials set]\nTo: ${to}\nSubject: ${subject}\nBody: ${html}\n`);
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log(`\n📧 [EMAIL LOG - no API key set]\nTo: ${to}\nSubject: ${subject}\nBody: ${html}\n`);
     return;
   }
   try {
-    await transporter.sendMail({ from: `"Ticketmaster" <${process.env.EMAIL_USER}>`, to, subject, html });
+    await sgMail.send({
+      to,
+      from: process.env.FROM_EMAIL || 'noreply@ticketmaster.com',
+      subject,
+      html,
+    });
     console.log(`Email sent to ${to}`);
   } catch (err) {
-    console.error('Email send error:', err.message);
+    console.error('Email send error:', err.response?.body || err.message);
   }
 };
 
