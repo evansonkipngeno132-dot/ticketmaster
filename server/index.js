@@ -90,7 +90,7 @@ app.post('/api/checkout', verifyToken, (req, res) => {
 app.use(express.static(path.join(__dirname, '../dist')));
 
 // ANY route that doesn't match an API route will be handled by React Router
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
