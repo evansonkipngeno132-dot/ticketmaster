@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Runtime data files (do not overwrite on deploy)
+server/db.json
+server/.env

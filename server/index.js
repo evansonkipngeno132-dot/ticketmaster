@@ -45,52 +45,87 @@ const sendEmail = async (to, subject, html) => {
   }
 };
 
-// ─── In-Memory Stores ────────────────────────────────────────────────────────
-const users = [
-  { id: 1, name: 'Admin User', email: 'admin@example.com', password: 'adminpassword', role: 'admin', approved: true },
-  { id: 2, name: 'John Doe', email: 'user@example.com', password: 'password123', role: 'user', approved: true }
-];
+// ─── Database Persistence ───────────────────────────────────────────────────
+const fs = require('fs');
+const DB_FILE = path.join(__dirname, 'db.json');
 
-let events = [
-  {
-    id: 1,
-    title: 'The Eras Tour - Live in Concert',
-    date: 'Fri, Nov 15 • 7:00 PM',
-    venue: 'MetLife Stadium, East Rutherford, NJ',
-    image: '/hero-bg.png',
-    category: 'Concerts',
-    createdBy: 1
-  },
-  {
-    id: 2,
-    title: 'NBA Finals: Game 7',
-    date: 'Sun, Jun 20 • 8:30 PM',
-    venue: 'Madison Square Garden, New York, NY',
-    image: '/event-sports.png',
-    category: 'Sports',
-    createdBy: 1
-  },
-  {
-    id: 3,
-    title: 'Hamilton - The Musical',
-    date: 'Wed, Aug 5 • 2:00 PM',
-    venue: 'Richard Rodgers Theatre, New York, NY',
-    image: '/event-theater.png',
-    category: 'Arts & Theater',
-    createdBy: 1
-  },
-  {
-    id: 4,
-    title: 'BTS: Yet To Come - Live Concert',
-    date: 'Sat, Dec 14 • 8:00 PM',
-    venue: 'SoFi Stadium, Los Angeles, CA',
-    image: '/hero-bg.png',
-    category: 'Concerts',
-    createdBy: 1
+const defaultDb = {
+  users: [
+    { id: 1, name: 'Admin User', email: 'admin@example.com', password: 'adminpassword', role: 'admin', approved: true },
+    { id: 2, name: 'John Doe', email: 'user@example.com', password: 'password123', role: 'user', approved: true }
+  ],
+  events: [
+    {
+      id: 1,
+      title: 'The Eras Tour - Live in Concert',
+      date: 'Fri, Nov 15 • 7:00 PM',
+      venue: 'MetLife Stadium, East Rutherford, NJ',
+      image: '/hero-bg.png',
+      category: 'Concerts',
+      createdBy: 1
+    },
+    {
+      id: 2,
+      title: 'NBA Finals: Game 7',
+      date: 'Sun, Jun 20 • 8:30 PM',
+      venue: 'Madison Square Garden, New York, NY',
+      image: '/event-sports.png',
+      category: 'Sports',
+      createdBy: 1
+    },
+    {
+      id: 3,
+      title: 'Hamilton - The Musical',
+      date: 'Wed, Aug 5 • 2:00 PM',
+      venue: 'Richard Rodgers Theatre, New York, NY',
+      image: '/event-theater.png',
+      category: 'Arts & Theater',
+      createdBy: 1
+    },
+    {
+      id: 4,
+      title: 'BTS: Yet To Come - Live Concert',
+      date: 'Sat, Dec 14 • 8:00 PM',
+      venue: 'SoFi Stadium, Los Angeles, CA',
+      image: '/hero-bg.png',
+      category: 'Concerts',
+      createdBy: 1
+    }
+  ],
+  tickets: []
+};
+
+let db = { ...defaultDb };
+
+const saveDb = () => {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing database file:', err.message);
   }
-];
+};
 
-let tickets = []; // { id, eventId, eventTitle, ownerEmail, ownerName, tier, price, purchasedAt }
+const loadDb = () => {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const data = fs.readFileSync(DB_FILE, 'utf8');
+      db = JSON.parse(data);
+      db.users = db.users || defaultDb.users;
+      db.events = db.events || defaultDb.events;
+      db.tickets = db.tickets || defaultDb.tickets;
+    } else {
+      saveDb();
+    }
+  } catch (err) {
+    console.error('Error loading database file:', err.message);
+  }
+};
+
+loadDb();
+
+const users = db.users;
+const events = db.events;
+const tickets = db.tickets;
 
 // ─── JWT Middleware ───────────────────────────────────────────────────────────
 const verifyToken = (req, res, next) => {
@@ -122,6 +157,7 @@ app.post('/api/signup', (req, res) => {
 
   const newUser = { id: users.length + 1, name, email, password, role: 'user', approved: false };
   users.push(newUser);
+  saveDb();
   res.json({ success: true, pendingApproval: true, message: 'Registration successful! Your account is pending admin approval.' });
 });
 
@@ -147,6 +183,7 @@ app.post('/api/admin/users/toggle-access', verifyToken, verifyAdmin, (req, res) 
   if (!user) return res.status(404).json({ success: false, message: 'User not found' });
   if (user.role === 'admin') return res.status(400).json({ success: false, message: 'Cannot modify admin access' });
   user.approved = !user.approved;
+  saveDb();
   res.json({ success: true, message: `Access ${user.approved ? 'allowed' : 'revoked'} for ${user.email}`, user: { id: user.id, name: user.name, email: user.email, role: user.role, approved: user.approved } });
 });
 
@@ -170,6 +207,7 @@ app.post('/api/events', verifyToken, (req, res) => {
     createdBy: req.user.id
   };
   events.push(newEvent);
+  saveDb();
   res.json({ success: true, event: newEvent });
 });
 
@@ -196,6 +234,7 @@ app.post('/api/checkout', verifyToken, (req, res) => {
     purchasedAt: new Date().toISOString()
   };
   tickets.push(newTicket);
+  saveDb();
 
   // Send confirmation email
   sendEmail(
@@ -240,6 +279,7 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
   const previousOwner = { name: ticket.ownerName, email: ticket.ownerEmail };
   ticket.ownerEmail = recipientEmail;
   ticket.ownerName = recipientName || recipientEmail;
+  saveDb();
 
   // Email to sender
   sendEmail(
