@@ -85,6 +85,51 @@
 
 @media (max-width: 768px) {
   .navbar-search {
-    display: none; /* Hide search on small screens for simplicity, or add a toggle icon */
+    display: none;
   }
+  .navbar-links {
+    gap: 4px;
+  }
+}
+
+.nav-link-highlight {
+  background-color: var(--tm-blue);
+  color: white !important;
+  border-radius: 6px;
+  padding: 8px 14px !important;
+}
+
+.nav-link-highlight:hover {
+  background-color: var(--tm-blue-hover) !important;
+  color: white !important;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-greeting {
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: default;
+}
+
+.user-greeting:hover {
+  background: none;
+  color: var(--text-secondary);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  color: var(--error-color) !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(211, 47, 47, 0.08) !important;
+  color: var(--error-color) !important;
 }

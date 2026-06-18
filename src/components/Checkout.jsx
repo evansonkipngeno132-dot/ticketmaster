@@ -21,11 +21,11 @@ const Checkout = () => {
       try {
         const res = await fetch('/api/checkout', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('tm_token')}`
           },
-          body: JSON.stringify({ eventId: event.id, paymentDetails: "mock_data" })
+          body: JSON.stringify({ eventId: event.id, isVip, paymentDetails: "mock_data" })
         });
         const data = await res.json();
         

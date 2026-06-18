@@ -6,12 +6,13 @@ import Home from './components/Home';
 import EventDetails from './components/EventDetails';
 import Checkout from './components/Checkout';
 import Login from './components/Login';
+import MyTickets from './components/MyTickets';
+import AddEvent from './components/AddEvent';
 import Footer from './components/Footer';
 import './App.css';
 
 const AnimatedRoutes = ({ authUser, setAuthUser }) => {
   const location = useLocation();
-  
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -19,20 +20,19 @@ const AnimatedRoutes = ({ authUser, setAuthUser }) => {
         <Route path="/events/:id" element={<EventDetails authUser={authUser} />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login setAuthUser={setAuthUser} />} />
+        <Route path="/my-tickets" element={<MyTickets />} />
+        <Route path="/add-event" element={<AddEvent />} />
       </Routes>
     </AnimatePresence>
   );
 };
 
 function App() {
-  // Restore user session from localStorage on first load
   const [authUser, setAuthUser] = useState(() => {
     const token = localStorage.getItem('tm_token');
     if (!token) return null;
     try {
-      // Decode JWT payload (middle part) without verifying signature
       const payload = JSON.parse(atob(token.split('.')[1]));
-      // Check if token is expired
       if (payload.exp && payload.exp * 1000 < Date.now()) {
         localStorage.removeItem('tm_token');
         return null;
