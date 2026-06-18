@@ -9,14 +9,14 @@ import Login from './components/Login';
 import Footer from './components/Footer';
 import './App.css';
 
-const AnimatedRoutes = ({ setAuthUser }) => {
+const AnimatedRoutes = ({ authUser, setAuthUser }) => {
   const location = useLocation();
   
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
-        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/events/:id" element={<EventDetails authUser={authUser} />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login setAuthUser={setAuthUser} />} />
       </Routes>
@@ -25,14 +25,30 @@ const AnimatedRoutes = ({ setAuthUser }) => {
 };
 
 function App() {
-  const [authUser, setAuthUser] = useState(null);
+  // Restore user session from localStorage on first load
+  const [authUser, setAuthUser] = useState(() => {
+    const token = localStorage.getItem('tm_token');
+    if (!token) return null;
+    try {
+      // Decode JWT payload (middle part) without verifying signature
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Check if token is expired
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem('tm_token');
+        return null;
+      }
+      return payload.user || null;
+    } catch {
+      return null;
+    }
+  });
 
   return (
     <BrowserRouter>
       <div className="app-layout">
         <Navbar authUser={authUser} setAuthUser={setAuthUser} />
         <main>
-          <AnimatedRoutes setAuthUser={setAuthUser} />
+          <AnimatedRoutes authUser={authUser} setAuthUser={setAuthUser} />
         </main>
         <Footer />
       </div>

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './EventDetails.css';
 
-const EventDetails = () => {
+const EventDetails = ({ authUser }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
@@ -17,9 +17,17 @@ const EventDetails = () => {
       .then(data => setEvent(data))
       .catch(err => {
         console.error("Event not found", err);
-        navigate('/'); // Redirect to home on error
+        navigate('/');
       });
   }, [id, navigate]);
+
+  const handleSelectTicket = (isVip = false) => {
+    if (!authUser) {
+      navigate('/login', { state: { from: `/events/${id}` } });
+    } else {
+      navigate('/checkout', { state: { event, isVip } });
+    }
+  };
 
   if (!event) return <div className="container" style={{padding: '100px 0', textAlign: 'center'}}>Loading...</div>;
 
@@ -61,6 +69,15 @@ const EventDetails = () => {
         <div className="ticket-selection-col">
           <div className="ticket-box">
             <h2>Select Tickets</h2>
+            {!authUser && (
+              <p className="login-notice">
+                ⚠️ Please{' '}
+                <span className="login-link" onClick={() => navigate('/login')}>sign in</span>
+                {' '}or{' '}
+                <span className="login-link" onClick={() => navigate('/login')}>sign up</span>
+                {' '}to purchase tickets.
+              </p>
+            )}
             <div className="ticket-tier">
               <div className="tier-info">
                 <h3>General Admission</h3>
@@ -68,7 +85,7 @@ const EventDetails = () => {
               </div>
               <div className="tier-price">
                 <span className="price">$150.00</span>
-                <button className="btn-select" onClick={() => navigate('/checkout', { state: { event } })}>Select</button>
+                <button className="btn-select" onClick={() => handleSelectTicket(false)}>Select</button>
               </div>
             </div>
             
@@ -79,7 +96,7 @@ const EventDetails = () => {
               </div>
               <div className="tier-price">
                 <span className="price">$450.00</span>
-                <button className="btn-select" onClick={() => navigate('/checkout', { state: { event, isVip: true } })}>Select</button>
+                <button className="btn-select" onClick={() => handleSelectTicket(true)}>Select</button>
               </div>
             </div>
           </div>

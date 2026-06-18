@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './Login.css';
 
 const Login = ({ setAuthUser }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
+  const location = useLocation();
+  const redirectTo = location.state?.from || '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +33,7 @@ const Login = ({ setAuthUser }) => {
       if (data.success) {
         localStorage.setItem('tm_token', data.token);
         setAuthUser(data.user);
-        navigate('/');
+        navigate(redirectTo);
       } else {
         setError(data.message || 'Authentication failed');
       }

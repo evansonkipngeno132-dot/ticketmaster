@@ -21,7 +21,10 @@ const Checkout = () => {
       try {
         const res = await fetch('/api/checkout', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('tm_token')}`
+          },
           body: JSON.stringify({ eventId: event.id, paymentDetails: "mock_data" })
         });
         const data = await res.json();
