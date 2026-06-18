@@ -28,15 +28,22 @@ const sendEmail = async (to, subject, html) => {
     return;
   }
   try {
+    const fromEmail = process.env.FROM_EMAIL || process.env.EMAIL_USER || 'noreply@ticketmaster.com';
     await sgMail.send({
       to,
-      from: process.env.FROM_EMAIL || 'noreply@ticketmaster.com',
+      from: {
+        email: fromEmail,
+        name: 'Ticketmaster'
+      },
       subject,
       html,
     });
-    console.log(`Email sent to ${to}`);
+    console.log(`Email successfully sent to ${to} from ${fromEmail}`);
   } catch (err) {
-    console.error('Email send error:', err.response?.body || err.message);
+    console.error('Email send error:', err.message);
+    if (err.response && err.response.body && err.response.body.errors) {
+      console.error('SendGrid Details:', JSON.stringify(err.response.body.errors, null, 2));
+    }
   }
 };
 
@@ -207,7 +214,7 @@ app.post('/api/events', verifyToken, (req, res) => {
 });
 
 // ─── Checkout & Tickets Endpoints ────────────────────────────────────────────
-app.post('/api/checkout', verifyToken, (req, res) => {
+app.post('/api/checkout', verifyToken, async (req, res) => {
   const { eventId, tier, isVip } = req.body;
   const event = events.find(e => e.id === parseInt(eventId));
   if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
@@ -241,7 +248,7 @@ app.post('/api/checkout', verifyToken, (req, res) => {
   saveDb();
 
   // Send confirmation email
-  sendEmail(
+  await sendEmail(
     req.user.email,
     `🎟️ Your ticket for ${event.title}`,
     `<h2>Booking Confirmed!</h2>
@@ -271,7 +278,7 @@ app.get('/api/my-tickets', verifyToken, (req, res) => {
   res.json(myTickets);
 });
 
-app.post('/api/tickets/transfer', verifyToken, (req, res) => {
+app.post('/api/tickets/transfer', verifyToken, async (req, res) => {
   const { ticketId, recipientEmail, recipientFirstName, recipientLastName, note } = req.body;
   if (!ticketId || !recipientEmail)
     return res.status(400).json({ success: false, message: 'Ticket ID and recipient email are required' });
@@ -293,7 +300,7 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
   saveDb();
 
   // Email to sender
-  sendEmail(
+  await sendEmail(
     previousOwner.email,
     `✅ Ticket Transfer Confirmed — ${ticket.eventTitle}`,
     `<h2>Ticket Transfer Successful</h2>
@@ -304,7 +311,7 @@ app.post('/api/tickets/transfer', verifyToken, (req, res) => {
   );
 
   // Email to recipient
-  sendEmail(
+  await sendEmail(
     recipientEmail,
     `🎟️ You've received a ticket for ${ticket.eventTitle}!`,
     `<h2>Ticket Received!</h2>
