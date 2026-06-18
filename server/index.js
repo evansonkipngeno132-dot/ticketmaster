@@ -23,6 +23,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verify SMTP connection config at startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('📧 SMTP Transporter verification failed:', error.message);
+  } else {
+    console.log('📧 SMTP Transporter is ready to send messages');
+  }
+});
+
 const sendEmail = async (to, subject, html) => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.log(`\n📧 [EMAIL LOG - no credentials set]\nTo: ${to}\nSubject: ${subject}\nBody: ${html}\n`);
