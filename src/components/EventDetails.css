@@ -1,0 +1,152 @@
+.event-details-page {
+  padding-bottom: var(--spacing-2xl);
+}
+
+.event-header {
+  position: relative;
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: var(--spacing-xl);
+}
+
+.event-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 100%);
+  z-index: 1;
+}
+
+.event-header-content {
+  position: relative;
+  z-index: 2;
+  color: var(--text-inverse);
+}
+
+.back-btn {
+  background: transparent;
+  color: #dddddd;
+  border: none;
+  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
+  padding: 0;
+  transition: color var(--transition-fast);
+}
+
+.back-btn:hover {
+  color: var(--text-inverse);
+  text-decoration: underline;
+}
+
+.event-header-content h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: var(--spacing-xs);
+}
+
+.event-meta {
+  font-size: 1.1rem;
+  color: #cccccc;
+}
+
+.event-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-xl);
+}
+
+.about-event, .venue-info {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.event-body h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
+}
+
+.venue-map-placeholder {
+  height: 250px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-top: var(--spacing-md);
+}
+
+.ticket-box {
+  background: var(--bg-primary);
+  padding: var(--spacing-lg);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  position: sticky;
+  top: 90px;
+}
+
+.ticket-tier {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ticket-tier:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tier-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tier-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.tier-price {
+  text-align: right;
+}
+
+.price {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--tm-blue);
+  margin-bottom: 8px;
+}
+
+.btn-select {
+  background-color: var(--tm-blue);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 24px;
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-select:hover {
+  background-color: var(--tm-blue-hover);
+}
+
+@media (max-width: 900px) {
+  .event-body {
+    grid-template-columns: 1fr;
+  }
+}
