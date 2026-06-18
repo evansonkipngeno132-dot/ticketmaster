@@ -68,6 +68,15 @@ let events = [
     image: '/event-theater.png',
     category: 'Arts & Theater',
     createdBy: 1
+  },
+  {
+    id: 4,
+    title: 'BTS: Yet To Come - Live Concert',
+    date: 'Sat, Dec 14 • 8:00 PM',
+    venue: 'SoFi Stadium, Los Angeles, CA',
+    image: '/hero-bg.png',
+    category: 'Concerts',
+    createdBy: 1
   }
 ];
 
