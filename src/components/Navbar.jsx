@@ -33,6 +33,9 @@ const Navbar = ({ authUser, setAuthUser }) => {
           <Link to="#" className="nav-link">Sell</Link>
           {authUser ? (
             <>
+              {authUser.role === 'admin' && (
+                <Link to="/admin" className="nav-link" style={{color: '#026cdf', fontWeight: 'bold'}}>Admin Panel</Link>
+              )}
               <Link to="/my-tickets" className="nav-link">My Tickets</Link>
               <Link to="/add-event" className="nav-link nav-link-highlight">+ Add Event</Link>
               <div className="user-menu">

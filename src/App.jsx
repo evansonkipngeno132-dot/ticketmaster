@@ -8,6 +8,7 @@ import Checkout from './components/Checkout';
 import Login from './components/Login';
 import MyTickets from './components/MyTickets';
 import AddEvent from './components/AddEvent';
+import AdminPanel from './components/AdminPanel';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -22,6 +23,7 @@ const AnimatedRoutes = ({ authUser, setAuthUser }) => {
         <Route path="/login" element={<Login setAuthUser={setAuthUser} />} />
         <Route path="/my-tickets" element={<MyTickets />} />
         <Route path="/add-event" element={<AddEvent />} />
+        <Route path="/admin" element={authUser && authUser.role === 'admin' ? <AdminPanel /> : <Login setAuthUser={setAuthUser} />} />
       </Routes>
     </AnimatePresence>
   );

@@ -31,9 +31,16 @@ const Login = ({ setAuthUser }) => {
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem('tm_token', data.token);
-        setAuthUser(data.user);
-        navigate(redirectTo);
+        if (data.pendingApproval) {
+          alert(data.message);
+          setIsSignUp(false);
+          setError('');
+          setName('');
+        } else {
+          localStorage.setItem('tm_token', data.token);
+          setAuthUser(data.user);
+          navigate(redirectTo);
+        }
       } else {
         setError(data.message || 'Authentication failed');
       }

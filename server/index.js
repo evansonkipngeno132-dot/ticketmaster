@@ -47,7 +47,8 @@ const sendEmail = async (to, subject, html) => {
 
 // ─── In-Memory Stores ────────────────────────────────────────────────────────
 const users = [
-  { id: 1, name: 'John Doe', email: 'user@example.com', password: 'password123' }
+  { id: 1, name: 'Admin User', email: 'admin@example.com', password: 'adminpassword', role: 'admin', approved: true },
+  { id: 2, name: 'John Doe', email: 'user@example.com', password: 'password123', role: 'user', approved: true }
 ];
 
 let events = [
@@ -103,6 +104,14 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+const verifyAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied: Admin role required' });
+  }
+};
+
 // ─── Auth Endpoints ───────────────────────────────────────────────────────────
 app.post('/api/signup', (req, res) => {
   const { name, email, password } = req.body;
@@ -111,19 +120,34 @@ app.post('/api/signup', (req, res) => {
   if (users.find(u => u.email === email))
     return res.status(400).json({ success: false, message: 'Email already in use' });
 
-  const newUser = { id: users.length + 1, name, email, password };
+  const newUser = { id: users.length + 1, name, email, password, role: 'user', approved: false };
   users.push(newUser);
-  const token = jwt.sign({ user: { id: newUser.id, name, email } }, JWT_SECRET, { expiresIn: '1h' });
-  res.json({ success: true, token, user: { id: newUser.id, name, email } });
+  res.json({ success: true, pendingApproval: true, message: 'Registration successful! Your account is pending admin approval.' });
 });
 
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email && u.password === password);
   if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
-  const safeUser = { id: user.id, name: user.name, email: user.email };
+  if (!user.approved) return res.status(403).json({ success: false, message: 'Your account is pending admin approval.' });
+  const safeUser = { id: user.id, name: user.name, email: user.email, role: user.role, approved: user.approved };
   const token = jwt.sign({ user: safeUser }, JWT_SECRET, { expiresIn: '1h' });
   res.json({ success: true, token, user: safeUser });
+});
+
+// ─── Admin Endpoints ─────────────────────────────────────────────────────────
+app.get('/api/admin/users', verifyToken, verifyAdmin, (req, res) => {
+  const safeUsers = users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role, approved: u.approved }));
+  res.json(safeUsers);
+});
+
+app.post('/api/admin/users/toggle-access', verifyToken, verifyAdmin, (req, res) => {
+  const { userId } = req.body;
+  const user = users.find(u => u.id === parseInt(userId));
+  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  if (user.role === 'admin') return res.status(400).json({ success: false, message: 'Cannot modify admin access' });
+  user.approved = !user.approved;
+  res.json({ success: true, message: `Access ${user.approved ? 'allowed' : 'revoked'} for ${user.email}`, user: { id: user.id, name: user.name, email: user.email, role: user.role, approved: user.approved } });
 });
 
 // ─── Events Endpoints ─────────────────────────────────────────────────────────
