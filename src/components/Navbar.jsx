@@ -1,12 +1,21 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ authUser, setAuthUser }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('tm_token');
+    setAuthUser(null);
+    navigate('/');
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <a href="/">Ticketmaster</a>
+          <Link to="/">Ticketmaster</Link>
         </div>
         
         <div className="navbar-search">
@@ -20,9 +29,16 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-links">
-          <a href="#" className="nav-link">Help</a>
-          <a href="#" className="nav-link">Sell</a>
-          <a href="#" className="nav-link">Sign In</a>
+          <Link to="#" className="nav-link">Help</Link>
+          <Link to="#" className="nav-link">Sell</Link>
+          {authUser ? (
+            <div className="user-menu">
+              <span className="nav-link">Hi, {authUser.name.split(' ')[0]}</span>
+              <button onClick={handleLogout} className="nav-link" style={{background: 'none', border: 'none', cursor: 'pointer'}}>Log Out</button>
+            </div>
+          ) : (
+            <Link to="/login" className="nav-link">Sign In</Link>
+          )}
         </div>
       </div>
     </nav>

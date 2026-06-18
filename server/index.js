@@ -1,8 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const JWT_SECRET = 'super_secret_key_123'; // In a real app, use environment variables
 
 app.use(cors());
 app.use(express.json());
@@ -35,6 +38,31 @@ const events = [
   }
 ];
 
+// Auth Endpoint
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (email === 'user@example.com' && password === 'password123') {
+    const user = { id: 1, name: 'John Doe', email: 'user@example.com' };
+    const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ success: true, token, user });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
+});
+
+// Middleware to verify JWT token (optional usage for protected routes)
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) return res.status(403).json({ message: 'No token provided' });
+  
+  jwt.verify(token.split(' ')[1], JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).json({ message: 'Unauthorized' });
+    req.user = decoded.user;
+    next();
+  });
+};
+
 // Routes
 app.get('/api/events', (req, res) => {
   res.json(events);
@@ -49,7 +77,8 @@ app.get('/api/events/:id', (req, res) => {
   }
 });
 
-app.post('/api/checkout', (req, res) => {
+// Protected Checkout Route
+app.post('/api/checkout', verifyToken, (req, res) => {
   const { eventId, paymentDetails } = req.body;
   // Mock processing delay
   setTimeout(() => {
@@ -57,6 +86,14 @@ app.post('/api/checkout', (req, res) => {
   }, 1500);
 });
 
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// ANY route that doesn't match an API route will be handled by React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+  console.log(`Backend server running on port ${PORT}`);
 });
