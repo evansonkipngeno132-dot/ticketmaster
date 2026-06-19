@@ -109,3 +109,33 @@
   background-color: var(--tm-blue);
   color: var(--text-inverse);
 }
+
+/* No events found empty state */
+.no-events-found {
+  text-align: center;
+  padding: 60px var(--spacing-md);
+  background: var(--bg-primary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  max-width: 500px;
+  margin: var(--spacing-xl) auto;
+}
+
+.no-events-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.no-events-found h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.no-events-found p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

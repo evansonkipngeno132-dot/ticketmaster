@@ -1,7 +1,14 @@
 import React from 'react';
 import './Hero.css';
 
-const Hero = () => {
+const Hero = ({ 
+  searchQuery, 
+  setSearchQuery, 
+  locationQuery, 
+  setLocationQuery, 
+  dateQuery, 
+  setDateQuery 
+}) => {
   return (
     <div className="hero-container">
       <div className="hero-background" style={{ backgroundImage: 'url(/hero-bg.png)' }}>
@@ -13,14 +20,32 @@ const Hero = () => {
         
         <div className="hero-search-filters">
           <div className="filter-input">
-            <label>Search by City or Zip</label>
-            <input type="text" placeholder="Enter location..." />
+            <label>Search</label>
+            <input 
+              type="text" 
+              placeholder="Artist, event or venue..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <div className="filter-input">
-            <label>Date Range</label>
-            <input type="text" placeholder="All Dates" />
+            <label>Location</label>
+            <input 
+              type="text" 
+              placeholder="City or Zip code..." 
+              value={locationQuery}
+              onChange={(e) => setLocationQuery(e.target.value)}
+            />
           </div>
-          <button className="search-btn">Search</button>
+          <div className="filter-input">
+            <label>Dates</label>
+            <input 
+              type="text" 
+              placeholder="All Dates" 
+              value={dateQuery}
+              onChange={(e) => setDateQuery(e.target.value)}
+            />
+          </div>
         </div>
       </div>
     </div>

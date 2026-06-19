@@ -59,6 +59,33 @@ const defaultDb = {
   events: [
     {
       id: 1,
+      title: 'Benson Boone: Fireworks & Rollercoasters Tour',
+      date: 'Sat, Jul 18 • 7:30 PM',
+      venue: 'SoFi Stadium, Los Angeles, CA',
+      image: '/hero-bg.png',
+      category: 'Concerts',
+      createdBy: 1
+    },
+    {
+      id: 2,
+      title: 'FIFA World Cup 2026: Opening Match',
+      date: 'Thu, Jun 11 • 6:00 PM',
+      venue: 'MetLife Stadium, East Rutherford, NJ',
+      image: '/event-sports.png',
+      category: 'Sports',
+      createdBy: 1
+    },
+    {
+      id: 3,
+      title: 'Kevin Hart: Acting My Age Tour',
+      date: 'Fri, Oct 24 • 8:00 PM',
+      venue: 'Madison Square Garden, New York, NY',
+      image: '/event-comedy.png',
+      category: 'Comedy',
+      createdBy: 1
+    },
+    {
+      id: 4,
       title: 'The Eras Tour - Live in Concert',
       date: 'Fri, Nov 15 • 7:00 PM',
       venue: 'MetLife Stadium, East Rutherford, NJ',
@@ -67,16 +94,16 @@ const defaultDb = {
       createdBy: 1
     },
     {
-      id: 2,
-      title: 'NBA Finals: Game 7',
-      date: 'Sun, Jun 20 • 8:30 PM',
-      venue: 'Madison Square Garden, New York, NY',
-      image: '/event-sports.png',
-      category: 'Sports',
+      id: 5,
+      title: 'Sebastian Maniscalco: It Ain\'t Right Tour',
+      date: 'Sat, Sep 20 • 7:00 PM',
+      venue: 'United Center, Chicago, IL',
+      image: '/event-comedy.png',
+      category: 'Comedy',
       createdBy: 1
     },
     {
-      id: 3,
+      id: 6,
       title: 'Hamilton - The Musical',
       date: 'Wed, Aug 5 • 2:00 PM',
       venue: 'Richard Rodgers Theatre, New York, NY',
@@ -85,12 +112,21 @@ const defaultDb = {
       createdBy: 1
     },
     {
-      id: 4,
-      title: 'BTS: Yet To Come - Live Concert',
-      date: 'Sat, Dec 14 • 8:00 PM',
-      venue: 'SoFi Stadium, Los Angeles, CA',
+      id: 7,
+      title: 'Billie Eilish: Hit Me Hard and Soft Tour',
+      date: 'Tue, Dec 16 • 7:30 PM',
+      venue: 'Kia Forum, Inglewood, CA',
       image: '/hero-bg.png',
       category: 'Concerts',
+      createdBy: 1
+    },
+    {
+      id: 8,
+      title: 'John Mulaney: In Concert',
+      date: 'Thu, Nov 6 • 8:00 PM',
+      venue: 'Hollywood Bowl, Los Angeles, CA',
+      image: '/event-comedy.png',
+      category: 'Comedy',
       createdBy: 1
     }
   ],
