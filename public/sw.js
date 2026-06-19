@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ticketmaster-cache-v1';
+const CACHE_NAME = 'ticketmaster-cache-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -45,13 +45,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Network-First Strategy
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((response) => {
-        // Cache static assets on the fly
+    fetch(event.request)
+      .then((response) => {
+        // Cache dynamic assets on the fly
         if (response.status === 200) {
           const cacheCopy = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -59,12 +57,17 @@ self.addEventListener('fetch', (event) => {
           });
         }
         return response;
-      }).catch(() => {
-        // Fallback for index.html if offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
-    })
+      })
+      .catch(() => {
+        // Fallback to cache if offline
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
+      })
   );
 });
