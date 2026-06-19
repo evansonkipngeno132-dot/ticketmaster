@@ -17,14 +17,27 @@
   height: 72px;
 }
 
-.navbar-logo a {
+.navbar-logo a,
+.navbar-logo-link {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #ffffff; /* Original Ticketmaster white logo on dark navbar */
+  color: #ffffff;
   letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
 }
 
-.navbar-logo a:hover {
+.navbar-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.navbar-logo a:hover,
+.navbar-logo-link:hover {
   color: #026cdf;
 }
 

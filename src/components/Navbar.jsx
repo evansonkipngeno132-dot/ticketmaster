@@ -64,7 +64,10 @@ const Navbar = ({ authUser, setAuthUser }) => {
       <nav className="navbar">
         <div className="navbar-container">
           <div className="navbar-logo">
-            <Link to="/">Ticketmaster</Link>
+            <Link to="/" className="navbar-logo-link">
+              <img src="/logo.svg" alt="Ticketmaster Logo" className="navbar-logo-img" />
+              <span>Ticketmaster</span>
+            </Link>
           </div>
 
           <div className="navbar-search">
