@@ -133,3 +133,119 @@
   background-color: rgba(211, 47, 47, 0.08) !important;
   color: var(--error-color) !important;
 }
+
+/* PWA Install Button */
+.install-app-btn {
+  background: linear-gradient(135deg, var(--tm-blue), #5c2eff);
+  color: white !important;
+  border: none;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(92, 46, 255, 0.25);
+  transition: all var(--transition-fast);
+}
+
+.install-app-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(92, 46, 255, 0.4);
+  background: linear-gradient(135deg, var(--tm-blue-hover), #4920df) !important;
+}
+
+/* iOS PWA Installation Guide Modal */
+.ios-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: var(--spacing-md);
+  animation: fadeIn 0.3s ease;
+}
+
+.ios-modal-box {
+  background: var(--bg-primary);
+  border-radius: 20px;
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ios-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.ios-modal-header h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ios-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.ios-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.ios-modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+}
+
+.ios-steps {
+  padding-left: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.ios-steps li {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: var(--spacing-md);
+}
+
+.ios-share-icon, .ios-add-icon {
+  background: var(--bg-tertiary);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.ios-modal-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
