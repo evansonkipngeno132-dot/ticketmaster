@@ -15,8 +15,9 @@ const Hero = ({
         <div className="hero-overlay"></div>
       </div>
       <div className="hero-content">
-        <h1>Let's Make Live Happen</h1>
-        <p>Shop millions of live events and discover can't-miss concerts, games, theater and more.</p>
+        <div className="hero-title-wrapper">
+          <h1 className="hero-title">ticketmaster<span className="hero-flag">🇺🇸</span></h1>
+        </div>
         
         <div className="hero-search-filters">
           <div className="filter-input">
