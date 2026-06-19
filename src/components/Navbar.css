@@ -1,10 +1,10 @@
 .navbar {
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
+  background-color: #1f262d; /* Original Ticketmaster dark charcoal/slate */
+  border-bottom: 1px solid #14191e;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .navbar-container {
@@ -18,14 +18,14 @@
 }
 
 .navbar-logo a {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--tm-blue);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff; /* Original Ticketmaster white logo on dark navbar */
   letter-spacing: -0.5px;
 }
 
 .navbar-logo a:hover {
-  color: var(--tm-blue-hover);
+  color: #026cdf;
 }
 
 .navbar-search {
@@ -45,23 +45,25 @@
   left: 12px;
   width: 18px;
   height: 18px;
-  color: var(--text-secondary);
+  color: #757575;
 }
 
 .search-input-wrapper input {
   width: 100%;
   padding: 10px 12px 10px 40px;
-  border: 1px solid var(--border-color);
-  border-radius: 24px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px; /* Blockier inputs like original TM */
   font-size: 0.95rem;
   font-family: var(--font-family);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast);
   outline: none;
+  background-color: #ffffff;
+  color: #111111;
 }
 
 .search-input-wrapper input:focus {
   border-color: var(--tm-blue);
-  box-shadow: 0 0 0 3px var(--tm-blue-light);
+  box-shadow: none;
 }
 
 .navbar-links {
@@ -71,16 +73,17 @@
 }
 
 .nav-link {
-  color: var(--text-primary);
+  color: #ffffff; /* White links */
   font-weight: 600;
   font-size: 0.95rem;
   padding: 8px 12px;
   border-radius: 4px;
+  transition: all var(--transition-fast);
 }
 
 .nav-link:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--tm-blue);
+  background-color: #2d3742; /* Dark hover background */
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {
@@ -95,7 +98,7 @@
 .nav-link-highlight {
   background-color: var(--tm-blue);
   color: white !important;
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 8px 14px !important;
 }
 
@@ -111,14 +114,14 @@
 }
 
 .user-greeting {
-  color: var(--text-secondary);
+  color: #a0aab5;
   font-weight: 500;
   cursor: default;
 }
 
 .user-greeting:hover {
   background: none;
-  color: var(--text-secondary);
+  color: #a0aab5;
 }
 
 .logout-btn {
@@ -126,12 +129,12 @@
   border: none;
   cursor: pointer;
   font-family: var(--font-primary);
-  color: var(--error-color) !important;
+  color: #ff5252 !important; /* Slightly brighter red for dark header */
 }
 
 .logout-btn:hover {
-  background-color: rgba(211, 47, 47, 0.08) !important;
-  color: var(--error-color) !important;
+  background-color: rgba(255, 82, 82, 0.08) !important;
+  color: #ff5252 !important;
 }
 
 /* PWA Install Button */
